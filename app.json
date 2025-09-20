@@ -22,6 +22,7 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "id": "@bad_bunny/geminitest"
   }
 }
