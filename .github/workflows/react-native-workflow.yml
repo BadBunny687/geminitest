@@ -30,13 +30,22 @@ jobs:
       - name: Start Expo and generate QR Code
         run: |
           npx expo start --tunnel > expo.log &
-          sleep 30
+          
+          echo "Waiting for Expo URL..."
+          COUNTER=0
+          while ! grep -q "exp://" expo.log && [ $COUNTER -lt 60 ]; do
+            sleep 2
+            let COUNTER=COUNTER+1
+          done
+
           EXPO_URL=$(grep -o 'exp://[a-zA-Z0-9./?@\-_~#=]*' expo.log | head -n 1)
+
           if [ -z "$EXPO_URL" ]; then
-            echo "Failed to find Expo URL in the log."
+            echo "Failed to find Expo URL in the log after waiting."
             cat expo.log
             exit 1
           fi
+
           echo "Found Expo URL: $EXPO_URL"
           qrcode -o qrcode.png "$EXPO_URL"
           echo "QR code generated as qrcode.png"
