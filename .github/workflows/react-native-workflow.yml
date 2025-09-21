@@ -1,0 +1,31 @@
+
+name: Run Expo and Generate QR Code
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  run-expo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18.x"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Start Expo and Generate QR Code
+        run: |
+          echo "Starting Expo..."
+          # Run with a timeout because 'start' is a long-running process
+          # The '||' true ensures the step doesn't fail when timeout kills the process
+          timeout 90s npx expo start --tunnel || true
+          echo "Expo process finished."
