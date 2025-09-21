@@ -1,4 +1,4 @@
-name: Expo QR Code Generation
+name: Legacy QR Code Attempt
 
 on:
   push:
