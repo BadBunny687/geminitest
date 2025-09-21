@@ -29,22 +29,20 @@ jobs:
 
       - name: Start Expo and generate QR Code
         run: |
-          unset CI
-          npx expo start --tunnel --non-interactive --json > expo.log 2>&1 &
+          export CI=1
+          npx expo start --tunnel > expo.log 2>&1 &
+          echo "Waiting for Expo to start..."
           sleep 30
-          
-          # Extract the URL from the JSON log
-          EXPO_URL=$(grep -o '"url": "[^"]*' expo.log | sed 's/"url": "//' | sed 's/"//')
-
-          if [ -z "$EXPO_URL" ]; then
-            echo "Failed to find Expo URL in the log."
-            cat expo.log
+          cat expo.log
+          URL=$(grep -Eo 'exp://[^ ]+' expo.log || grep -Eo 'https?://[^\"]+\.expo\.dev[^ ]+' expo.log || true)
+          if [ -z "$URL" ]; then
+            echo "❌ Failed to find Expo URL in expo.log"
             exit 1
+          else
+            echo "✅ Found Expo URL: $URL"
+            qrcode -o qrcode.png "$URL"
+            echo "QR code generated as qrcode.png"
           fi
-
-          echo "Found Expo URL: $EXPO_URL"
-          qrcode -o qrcode.png "$EXPO_URL"
-          echo "QR code generated as qrcode.png"
 
       - name: Upload QR Code Artifact
         uses: actions/upload-artifact@v4
