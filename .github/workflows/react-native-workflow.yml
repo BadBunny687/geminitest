@@ -1,9 +1,7 @@
-name: Legacy QR Code Attempt
+name: Legacy QR Code Attempt (Manual Trigger Only)
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch: # This makes it a manual trigger
 
 jobs:
   generate-qr-code:
@@ -49,4 +47,3 @@ jobs:
         with:
           name: expo-qr-code
           path: qrcode.png
-
