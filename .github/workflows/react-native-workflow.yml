@@ -1,22 +1,8 @@
-name: Build and Deploy Web Preview
-
+name: Build Web Preview
 on:
   push:
     branches:
       - main
-  workflow_dispatch: # Allow manual runs
-
-# Add permissions for GITHUB_TOKEN to allow deployment to GitHub Pages
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
 
 jobs:
   build:
@@ -32,25 +18,8 @@ jobs:
         run: npm install
       - name: Build web app
         run: npx expo export -p web
-
-      - name: Fix Asset Paths
-        run: |
-          sed -i 's|href="/_expo/|href="./_expo/|g' dist/index.html
-          sed -i 's|src="/_expo/|src="./_expo/|g' dist/index.html
-
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          path: ./dist
-
-  deploy:
-    name: Deploy to GitHub Pages
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          name: web-preview
+          path: dist
