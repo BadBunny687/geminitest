@@ -2,6 +2,7 @@
   "name": "rapidflow",
   "main": "expo-router/entry",
   "version": "1.0.0",
+  "homepage": "https://badbunny687.github.io/geminitest",
   "scripts": {
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
