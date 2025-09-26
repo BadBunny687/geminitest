@@ -41,6 +41,10 @@ jobs:
           cat dist/index.html
           echo "------------------------------------"
 
+      - name: Create 404.html Redirect
+        run: |
+          echo '<script>sessionStorage.redirect = location.href;</script><meta http-equiv="refresh" content="0;URL=./index.html">'> dist/404.html
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
