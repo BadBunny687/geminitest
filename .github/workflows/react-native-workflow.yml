@@ -7,17 +7,11 @@ on:
   workflow_dispatch: # Allow manual runs
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
+  contents: write # Needed to push to gh-pages branch
 
 jobs:
-  build:
-    name: Build Web Preview
+  build-and-deploy:
+    name: Build and Deploy
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -27,27 +21,13 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: npm install
-      - name: Build web app
-        run: npx expo export -p web
+      - name: Install gh-pages
+        run: npm install gh-pages
 
-      - name: Fix Asset Paths
-        run: |
-          find dist -type f -name '*.html' -exec sed -i 's|href="/_expo/|href="./_expo/|g' {} +
-          find dist -type f -name '*.html' -exec sed -i 's|src="/_expo/|src="./_expo/|g' {} +
-
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./dist
-
-  deploy:
-    name: Deploy to GitHub Pages
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
       - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.email "gemini-agent@google.com"
+          git config --global user.name "Gemini Agent"
+          npm run deploy
