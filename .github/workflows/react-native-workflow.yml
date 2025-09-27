@@ -30,12 +30,6 @@ jobs:
       - name: Build web app
         run: npx expo export -p web
 
-      - name: Create 404.html Fallback
-        run: cp dist/index.html dist/404.html
-
-      - name: Add .nojekyll file
-        run: touch dist/.nojekyll
-
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
