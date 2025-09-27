@@ -34,3 +34,6 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
+
+      - name: Output Deployed URL
+        run: echo "Live preview is available at: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
