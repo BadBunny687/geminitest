@@ -28,7 +28,18 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Build web app
-        run: npx expo export -p web --public-url ./
+        run: npx expo export -p web
+
+      - name: Fix Asset Paths
+        run: |
+          find dist -type f -name '*.html' -exec sed -i 's|href="/_expo/|href="./_expo/|g' {} +
+          find dist -type f -name '*.html' -exec sed -i 's|src="/_expo/|src="./_expo/|g' {} +
+          find dist -type f -name '*.js' -exec sed -i 's|"/unmatched[^"]*"|"./unmatched.png"|g' {} +
+
+      - name: Create 404.html Redirect
+        run: |
+          echo '<script>sessionStorage.redirect = location.href;</script><meta http-equiv="refresh" content="0;URL=./index.html">'> dist/404.html
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
